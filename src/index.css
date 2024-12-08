@@ -110,8 +110,19 @@ body {
     margin-bottom: -15px;
 }
 
-#undo,
 #restart {
+    display: block;
+    width: 100px;
+    height: 30px;
+    background-color: #388e3c;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#undo {
     display: block;
     width: 100px;
     height: 30px;
@@ -133,6 +144,8 @@ body {
     display: flex;
     justify-content: center;
     margin-top: 10px;
+    align-items: center;
+    gap: 10px;
 }
 
 .select-mode > #one-player {
@@ -141,5 +154,22 @@ body {
 
 .select-mode > #restart {
     display: block;
-    margin-top: 4px;
+}
+
+.select-mode > select {
+    display: block;
+    width: 120px;
+    height: 30px;
+    background-color: #388e3c;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    font-size: 16px;
+}
+
+.select-mode > select:hover {
+    background-color: #4caf50;
 }

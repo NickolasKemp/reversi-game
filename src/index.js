@@ -107,8 +107,9 @@ class Game extends React.Component {
                 },
             ],
             singlePlayer: true,
-            playerColor: "B", //Relevant only if we are in single player mode
-            machineColor: "W", // Relevant only if we are in single player mode
+            playerColor: "B",
+            machineColor: "W",
+            difficulty: "medium", // Додано для вибору рівня складності
         };
     }
 
@@ -131,14 +132,11 @@ class Game extends React.Component {
             this.state.history[this.state.history.length - 1].winner === null &&
             this.state.history[this.state.history.length - 1].tie === null
         ) {
-            let validMovesList = validMoves(
+            let move = getBestMove(
                 this.state.history[this.state.history.length - 1].board,
-                this.state.history[this.state.history.length - 1].turn
+                this.state.history[this.state.history.length - 1].turn,
+                this.state.difficulty
             );
-            let move =
-                validMovesList[
-                    Math.floor(Math.random() * validMovesList.length)
-                ];
             this.handleClick(move[0], move[1], true);
         }
     }
@@ -299,6 +297,10 @@ class Game extends React.Component {
         }
     }
 
+    setDifficulty(difficulty) {
+        this.setState({ difficulty });
+    }
+
     render() {
         let turnColor =
             this.state.history[this.state.history.length - 1].turn === "B"
@@ -341,6 +343,14 @@ class Game extends React.Component {
                     <button id="restart" onClick={this.restart.bind(this)}>
                         Restart
                     </button>
+                    <select
+                        value={this.state.difficulty}
+                        onChange={(e) => this.setDifficulty(e.target.value)}
+                    >
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
                 </div>
                 <div className="scores">
                     <div className="black-score">
@@ -534,4 +544,91 @@ function countScore(board, player) {
         }
     }
     return total;
+}
+
+function appEvaluateBoard(board, player) {
+    let score = 0;
+    for (let i = 0; i < board.length; i++) {
+        if (board[i] === player) {
+            score++;
+        } else if (board[i] !== null) {
+            score--;
+        }
+    }
+    return score;
+}
+
+function alphaBeta(board, depth, alpha, beta, maximizingPlayer, player) {
+    if (depth === 0 || validMoves(board, player).length === 0) {
+        return appEvaluateBoard(board, player);
+    }
+
+    let opponent = player === "B" ? "W" : "B";
+
+    if (maximizingPlayer) {
+        let maxAppEval = -Infinity;
+        for (let move of validMoves(board, player)) {
+            let newBoard = board.slice();
+            makeMove(newBoard, player, move);
+            let appEval = alphaBeta(
+                newBoard,
+                depth - 1,
+                alpha,
+                beta,
+                false,
+                player
+            );
+            maxAppEval = Math.max(maxAppEval, appEval);
+            alpha = Math.max(alpha, appEval);
+            if (beta <= alpha) {
+                break;
+            }
+        }
+        return maxAppEval;
+    } else {
+        let minAppEval = Infinity;
+        for (let move of validMoves(board, opponent)) {
+            let newBoard = board.slice();
+            makeMove(newBoard, opponent, move);
+            let appEval = alphaBeta(
+                newBoard,
+                depth - 1,
+                alpha,
+                beta,
+                true,
+                player
+            );
+            minAppEval = Math.min(minAppEval, appEval);
+            beta = Math.min(beta, appEval);
+            if (beta <= alpha) {
+                break;
+            }
+        }
+        return minAppEval;
+    }
+}
+
+function getBestMove(board, player, difficulty) {
+    let bestMove = null;
+    let bestValue = -Infinity;
+    let depth = difficulty === "easy" ? 1 : difficulty === "medium" ? 3 : 5;
+
+    for (let move of validMoves(board, player)) {
+        let newBoard = board.slice();
+        makeMove(newBoard, player, move);
+        let movappEvalue = alphaBeta(
+            newBoard,
+            depth,
+            -Infinity,
+            Infinity,
+            false,
+            player
+        );
+        if (movappEvalue > bestValue) {
+            bestValue = movappEvalue;
+            bestMove = move;
+        }
+    }
+
+    return bestMove;
 }
