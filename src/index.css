@@ -55,8 +55,8 @@ body {
 
 .board {
     width: 360px;
-    margin: 20px;
-    display: inline-block;
+    margin: 20px auto;
+    display: block;
     background-color: #4caf50;
     border-radius: 10px;
     padding: 10px;
@@ -93,7 +93,7 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    background-color: #ffffff;
+    background-color: #dfdfdf;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -107,7 +107,7 @@ body {
 
 .scores > .black-score svg,
 .scores > .white-score svg {
-    margin-bottom: 5px;
+    margin-bottom: -15px;
 }
 
 #undo,
