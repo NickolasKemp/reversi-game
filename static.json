@@ -5,6 +5,9 @@
         },
         "/static/js/*": {
             "Content-Type": "application/javascript"
+        },
+        "/static/*": {
+            "Cache-Control": "public, max-age=31536000"
         }
     }
 }
